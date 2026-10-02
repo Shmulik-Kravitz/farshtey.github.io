@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <!-- מוחלף בערך של --base-href בבנייה. לאירוח בתת־נתיב לא ידוע: ראו tools/beta/build-web.sh -->
+  <base href="./">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="פארשטיי — לימוד הבנת יידיש דרך שיחות הרבי">
+  <meta name="theme-color" content="#0A1633">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="פארשטיי">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>פארשטיי</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    /* מסך טעינה בצבעי המותג, עד שהאפליקציה עולה */
+    html, body { margin: 0; height: 100%; background: #F5EEDD; }
+    @media (prefers-color-scheme: dark) { html, body { background: #0A1024; } }
+    #splash { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      font: 700 34px/1 "Frank Ruhl Libre", "David", serif; color: #C39436; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+  <div id="splash">פארשטיי</div>
+  <script>
+    // שליחת נתוני הבדיקה (lib/app/export/data_export_web.dart). לפי הסדר:
+    // 1. בדף מפורסם ב-claude.ai — יכולת downloads: הבודק מאשר ושומר קובץ.
+    // 2. בדפדפן בטלפון — גיליון השיתוף, עם קובץ (וואטסאפ, מייל).
+    // 3. בדפדפן רגיל — הורדת קובץ.
+    // 4. אחרת — העתקה ללוח.
+    window.farshteyExport = async (name, text) => {
+      try {
+        const d = window.claude?.use ? await window.claude.use("downloads") : null;
+        if (d) {
+          try { await d.save({ filename: name, data: text }); return "downloads"; }
+          catch (e) { if (e?.code === "declined") return "declined"; }
+        }
+      } catch (e) {}
+      try {
+        const f = new File([text], name, { type: "application/json" });
+        if (navigator.canShare?.({ files: [f] })) { await navigator.share({ files: [f], title: name }); return "share"; }
+      } catch (e) { if (e?.name === "AbortError") return "declined"; }
+      try {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+        a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        return "download";
+      } catch (e) {}
+      try { await navigator.clipboard.writeText(text); return "clipboard"; } catch (e) {}
+      return "failed";
+    };
+  </script>
+  <script>
+    // תזכורת יומית באתר (lib/app/reminders_web.dart). אתר סטטי, בלי שרת — ההתראה מוצגת כשהאתר
+    // פתוח (גם בלשונית ברקע, או כאפליקציה שהותקנה למסך הבית). הרשימה מגיעה מהאפליקציה, כבר בלי
+    // שבת ויום טוב, ומתחדשת בכל פתיחה.
+    window.farshteyNotify = {
+      timers: [],
+      supported: () => "Notification" in window && window.isSecureContext,
+      permission: () => ("Notification" in window ? Notification.permission : "denied"),
+      request: async () => {
+        try { return (await Notification.requestPermission()) === "granted"; } catch (e) { return false; }
+      },
+      schedule: (times, title, body) => {
+        const n = window.farshteyNotify;
+        n.timers.forEach(clearTimeout);
+        n.timers = [];
+        const now = Date.now();
+        for (const t of JSON.parse(times)) {
+          const wait = t - now;
+          if (wait <= 0 || wait > 2147483647) continue;
+          n.timers.push(setTimeout(() => {
+            if (Notification.permission !== "granted") return;
+            const note = new Notification(title, { body, icon: "icons/Icon-192.png", lang: "he", dir: "rtl", tag: "farshtey-daily" });
+            note.onclick = () => { window.focus(); note.close(); };
+          }, wait));
+        }
+      },
+    };
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
