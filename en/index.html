@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1633">
+<link rel="canonical" href="https://farshtey.lubavitchnetworks.org/en/">
+<link rel="alternate" hreflang="en" href="https://farshtey.lubavitchnetworks.org/en/">
+<link rel="alternate" hreflang="he" href="https://farshtey.lubavitchnetworks.org/">
+<link rel="icon" href="../img/icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Farshtey — understand a sicha in Yiddish">
+<meta property="og:description" content="Tap any word to see what it means right here, then play the same passage. Free, no ads.">
+<meta property="og:url" content="https://farshtey.lubavitchnetworks.org/en/">
+<meta property="og:image" content="https://farshtey.lubavitchnetworks.org/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<title>Farshtey</title>
+<meta name="description" content="Farshtey — learn to read a sicha in the original Yiddish and understand it: tap a word for its meaning, then play the same passage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: a navy "night study" hero holding a live page of the sichah, then parchment chapters that
+   follow the app's own path — learn, play, advance — with phones set against the text. */
+:root {
+  --parchment: #F5EEDD;
+  --page: #FFFBF2;
+  --page-alt: #EFE5CF;
+  --ink: #1A1E2C;
+  --ink-soft: #5E6273;
+  --line: #E3D6B8;
+  --gold: #C39436;
+  --gold-bright: #E9C876;
+  --gold-deep: #8A661C;
+  --draft: #9A6A0A;
+  --navy: #14264C;
+  --navy-deep: #0A1633;
+  --on-navy: #F7EFDC;
+  --on-navy-soft: #B9BFD3;
+  --shadow: 0 1px 0 rgba(20, 38, 76, .04), 0 18px 40px -18px rgba(20, 38, 76, .35);
+  --serif: "Frank Ruhl Libre", "David Libre", "Times New Roman", serif;
+  --sans: "Heebo", "Assistant", "Arial Hebrew", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --parchment: #0A1024; --page: #131C38; --page-alt: #1B2749; --ink: #F2EAD8; --ink-soft: #A6ACC2;
+    --line: #2A365C; --gold: #E0B660; --gold-bright: #F4D78E; --gold-deep: #E0B660; --draft: #F2C66A;
+    --navy: #16274F; --navy-deep: #060C1E; --shadow: 0 18px 40px -18px rgba(0, 0, 0, .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --parchment: #0A1024; --page: #131C38; --page-alt: #1B2749; --ink: #F2EAD8; --ink-soft: #A6ACC2;
+  --line: #2A365C; --gold: #E0B660; --gold-bright: #F4D78E; --gold-deep: #E0B660; --draft: #F2C66A;
+  --navy: #16274F; --navy-deep: #060C1E; --shadow: 0 18px 40px -18px rgba(0, 0, 0, .7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+body {
+  background: var(--parchment); color: var(--ink);
+  font: 400 1.0625rem/1.7 var(--sans);
+  direction: ltr;
+}
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--serif); text-wrap: balance; margin: 0; line-height: 1.15; }
+p { margin: 0; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+.wrap { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: 20px; }
+.eyebrow { font: 700 .8125rem/1.2 var(--sans); letter-spacing: .06em; color: var(--gold-deep); }
+
+/* ─── buttons ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: .6em;
+  padding: .85em 1.4em; border-radius: 999px; text-decoration: none;
+  font: 700 1.0625rem/1 var(--sans); white-space: nowrap;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-gold {
+  color: #14213F;
+  background: linear-gradient(180deg, #EECF80, #C9993A);
+  box-shadow: 0 4px 0 #8A661C, 0 14px 30px -12px rgba(233, 200, 118, .6);
+}
+.btn-gold:active { transform: translateY(2px); box-shadow: 0 2px 0 #8A661C; }
+.btn-ghost { color: var(--on-navy); border: 1.5px solid rgba(233, 200, 118, .45); }
+.btn-ghost:hover { border-color: var(--gold-bright); }
+.btn svg { width: 1.1em; height: 1.1em; flex: none; }
+
+/* ─── header ─── */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--navy-deep) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(233, 200, 118, .12);
+}
+.top .wrap { display: flex; align-items: center; gap: 24px; min-height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--on-navy); }
+.brand img { width: 36px; height: 36px; border-radius: 9px; }
+.brand b { font: 900 1.5rem/1 var(--serif); color: var(--gold-bright); }
+.top nav { display: flex; gap: 22px; margin-inline-start: auto; }
+.top nav a { color: var(--on-navy-soft); text-decoration: none; font-weight: 500; font-size: .9375rem; }
+.top nav a:hover { color: var(--on-navy); }
+.top .btn { padding: .6em 1.1em; font-size: .9375rem; }
+@media (max-width: 760px) { .top nav { display: none; } .top .btn { margin-inline-start: auto; } }
+
+/* ─── hero ─── */
+.hero {
+  background:
+    radial-gradient(ellipse 60% 70% at 15% 30%, rgba(233, 200, 118, .10), transparent 70%),
+    radial-gradient(ellipse 80% 60% at 90% 110%, rgba(61, 90, 158, .35), transparent 70%),
+    linear-gradient(180deg, var(--navy-deep), var(--navy));
+  color: var(--on-navy);
+  padding-block: 64px 88px;
+  overflow: hidden;
+}
+.hero .wrap { display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center; }
+.hero-copy { display: grid; gap: 22px; min-width: 0; }
+.hero .eyebrow { color: var(--gold-bright); opacity: .9; }
+.hero h1 { font-size: clamp(2.6rem, 6vw, 4.4rem); font-weight: 900; letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--gold-bright); }
+.hero .lead { font-size: 1.1875rem; color: var(--on-navy-soft); max-width: 34ch; }
+.hero .lead b { color: var(--on-navy); font-weight: 500; }
+.ctas { display: flex; flex-wrap: wrap; gap: 14px; padding-top: 6px; }
+.trust { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: .9375rem; color: var(--on-navy-soft); padding: 0; margin: 4px 0 0; list-style: none; }
+.trust li { display: flex; align-items: center; gap: 7px; }
+.trust li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+
+/* the live page */
+.leaf {
+  position: relative; min-width: 0;
+  background: var(--page); color: var(--ink);
+  border-radius: 28px; padding: 26px 30px 0;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .7), 0 0 0 1px rgba(233, 200, 118, .25);
+}
+.leaf-head { display: flex; align-items: center; gap: 12px; }
+.seal {
+  width: 44px; height: 44px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  font: 900 1.35rem/1 var(--serif); color: #14213F;
+  background: linear-gradient(180deg, #EECF80, #C39436);
+}
+.leaf-head .src { font-size: .875rem; color: var(--ink-soft); line-height: 1.35; }
+.leaf-head .src b { display: block; color: var(--ink); font-weight: 700; font-size: .9375rem; }
+.hint {
+  margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px;
+  font-size: .8125rem; font-weight: 700; color: var(--gold-deep);
+  background: var(--page-alt); padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+}
+.hint svg { width: 14px; height: 14px; }
+.yi {
+  font: 500 clamp(1.45rem, 2.6vw, 1.9rem)/2.05 var(--serif);
+  margin: 18px 0 8px; direction: rtl;
+}
+.w {
+  font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0;
+  cursor: pointer; border-radius: 6px;
+  text-decoration: underline dashed; text-decoration-color: color-mix(in srgb, var(--gold) 70%, transparent);
+  text-decoration-thickness: 1.5px; text-underline-offset: 9px;
+  transition: background .12s ease;
+}
+.w:hover { background: color-mix(in srgb, var(--gold-bright) 22%, transparent); }
+.w.on { background: color-mix(in srgb, var(--gold-bright) 42%, transparent); text-decoration-style: solid; text-decoration-color: var(--gold); }
+.whole { font-size: .9375rem; color: var(--ink-soft); padding-bottom: 18px; }
+.whole button {
+  font: 700 .875rem/1 var(--sans); color: var(--gold-deep); background: none; border: 0; padding: 4px 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.whole p { margin-top: 8px; font-family: var(--serif); font-size: 1.0625rem; color: var(--ink); }
+.sheet {
+  margin: 0 -30px; padding: 22px 30px 24px;
+  border-radius: 24px 24px 28px 28px;
+  background: linear-gradient(160deg, #13244A, #0B1633);
+  color: var(--on-navy);
+  display: grid; gap: 6px;
+  min-height: 176px;
+}
+.sheet .hw { font: 900 1.9rem/1.2 var(--serif); color: var(--gold-bright); }
+.sheet .meta { font-size: .875rem; color: var(--on-navy-soft); }
+.sheet .he { font: 800 1.6rem/1.3 var(--sans); }
+.sheet .hw { direction: rtl; text-align: left; }
+.sheet .en { font-size: 1rem; color: var(--on-navy-soft); direction: rtl; text-align: left; font-family: var(--sans); }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 6px; }
+.tag { font-size: .75rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(233, 200, 118, .45); color: var(--gold-bright); }
+.tag.kind { border-color: rgba(185, 191, 211, .35); color: var(--on-navy-soft); }
+.sheet.pop { animation: pop .22s ease; }
+@keyframes pop { from { transform: translateY(6px); opacity: .6; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 900px) {
+  .hero { padding-block: 40px 56px; }
+  .hero .wrap { grid-template-columns: 1fr; gap: 36px; }
+}
+@media (max-width: 480px) {
+  .leaf { padding: 20px 18px 0; border-radius: 22px; }
+  .sheet { margin: 0 -18px; padding: 18px 18px 20px; }
+  .hint { display: none; }
+}
+
+/* ─── sections ─── */
+section { padding-block: 88px; }
+.sec-head { display: grid; gap: 12px; max-width: 640px; margin-bottom: 48px; }
+.sec-head h2 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; }
+.sec-head p { color: var(--ink-soft); font-size: 1.125rem; }
+
+.phone {
+  width: 100%; max-width: 270px; min-width: 0; overflow: hidden;
+  border-radius: 30px; padding: 7px;
+  background: #0B1226;
+  box-shadow: var(--shadow), 0 0 0 1px rgba(233, 200, 118, .18);
+}
+.phone img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 24px; background: var(--page-alt); }
+
+/* steps: a real sequence, so they are numbered */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; counter-reset: step; }
+.step { display: grid; gap: 18px; justify-items: center; text-align: center; min-width: 0; }
+.step .n {
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  font: 900 1.4rem/1 var(--serif); color: #14213F;
+  background: linear-gradient(180deg, #EECF80, #C39436);
+  box-shadow: 0 4px 0 #8A661C;
+}
+.step h3 { font-size: 1.6rem; font-weight: 700; }
+.step p { color: var(--ink-soft); max-width: 30ch; }
+.step .phone { margin-top: 6px; }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr; gap: 64px; } }
+
+/* the path */
+.path { background: var(--page); border-block: 1px solid var(--line); }
+.path .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+.path .copy { display: grid; gap: 22px; min-width: 0; }
+.figures { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 12px 40px; margin: 8px 0 0; }
+.figures div { display: grid; gap: 2px; }
+.figures dt { font: 900 2.6rem/1 var(--serif); color: var(--gold-deep); font-variant-numeric: tabular-nums; }
+.figures dd { margin: 0; font-size: .9375rem; color: var(--ink-soft); }
+.path .phone { justify-self: center; }
+@media (max-width: 860px) { .path .wrap { grid-template-columns: 1fr; } .figures { gap: 12px 28px; } }
+
+/* built for learners */
+.feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .feats { grid-template-columns: repeat(2, 1fr); } }
+.feat {
+  background: var(--page); border: 1px solid var(--line); border-radius: 20px;
+  padding: 24px; display: grid; gap: 8px; align-content: start;
+}
+.feat.wide { grid-column: span 2; background: linear-gradient(160deg, var(--navy), var(--navy-deep)); color: var(--on-navy); border-color: transparent; }
+.feat.wide p { color: var(--on-navy-soft); }
+.feat.wide h3 { color: var(--gold-bright); }
+.feat .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--page-alt); color: var(--gold-deep); }
+.feat.wide .ic { background: rgba(233, 200, 118, .14); color: var(--gold-bright); }
+.feat .ic svg { width: 22px; height: 22px; }
+.feat h3 { font-size: 1.3rem; font-weight: 700; }
+.feat p { color: var(--ink-soft); font-size: 1rem; }
+@media (max-width: 600px) { .feats { grid-template-columns: 1fr; } .feat.wide { grid-column: auto; } }
+
+/* translation note */
+.note { padding-block: 0 88px; }
+.note .card {
+  border: 1.5px dashed color-mix(in srgb, var(--draft) 60%, transparent);
+  border-radius: 24px; padding: 32px; display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+  background: color-mix(in srgb, var(--page) 70%, transparent);
+}
+.note .badge {
+  font-size: .8125rem; font-weight: 700; color: var(--draft); border: 1.5px solid currentColor;
+  border-radius: 999px; padding: 6px 14px; white-space: nowrap;
+}
+.note h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+.note p { color: var(--ink-soft); max-width: 70ch; }
+@media (max-width: 640px) { .note .card { grid-template-columns: 1fr; padding: 24px; } .note .badge { justify-self: start; } }
+
+/* faq */
+.faq { background: var(--page); border-top: 1px solid var(--line); }
+.faq .wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 56px; }
+.faq .sec-head { margin: 0; align-content: start; }
+.qa { border-top: 1px solid var(--line); }
+details { border-bottom: 1px solid var(--line); }
+summary {
+  list-style: none; cursor: pointer; padding: 20px 0; display: flex; gap: 16px; align-items: center;
+  font: 700 1.1875rem/1.35 var(--sans);
+}
+summary::-webkit-details-marker { display: none; }
+summary::after {
+  content: "+"; margin-inline-start: auto; font: 500 1.6rem/1 var(--sans); color: var(--gold-deep);
+  transition: transform .2s ease;
+}
+details[open] summary::after { transform: rotate(45deg); }
+details p { padding: 0 0 22px; color: var(--ink-soft); max-width: 62ch; }
+@media (max-width: 860px) { .faq .wrap { grid-template-columns: 1fr; gap: 24px; } }
+
+/* closing */
+.close {
+  background: linear-gradient(180deg, var(--navy), var(--navy-deep));
+  color: var(--on-navy); text-align: center;
+}
+.close .wrap { display: grid; justify-items: center; gap: 20px; }
+.close h2 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 900; }
+.close h2 em { font-style: normal; color: var(--gold-bright); }
+.close p { color: var(--on-navy-soft); font-size: 1.125rem; max-width: 46ch; }
+.close .ctas { justify-content: center; }
+footer { background: var(--navy-deep); color: var(--on-navy-soft); font-size: .875rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-block: 24px; border-top: 1px solid rgba(233, 200, 118, .12); }
+footer span:first-child { color: var(--on-navy); font-weight: 700; }
+.lang { color: var(--on-navy-soft); text-decoration: none; font-weight: 700; font-size: .9375rem; border: 1px solid rgba(233, 200, 118, .3); border-radius: 999px; padding: .35em .8em; }
+.lang:hover { color: var(--on-navy); border-color: var(--gold-bright); }
+.hero h1 { letter-spacing: -.02em; }
+.step { align-content: start; }
+@media (max-width: 760px) { .lang { margin-inline-start: auto; } .top .lang ~ .btn { margin-inline-start: 0; } }
+@media (max-width: 480px) { .top .btn { display: none; } }
+.also { font-size: .9375rem; color: var(--on-navy-soft); }
+.also a { color: var(--gold-bright); font-weight: 700; text-underline-offset: 4px; }
+details p a { color: var(--gold-deep); font-weight: 700; }
+details ol { margin: -8px 0 22px; padding-inline-start: 22px; color: var(--ink-soft); max-width: 62ch; }
+details ol li { margin: 6px 0; line-height: 1.6; }
+details ol a { color: var(--gold-deep); font-weight: 700; }
+details ol b { color: var(--ink); }
+.yi .st-words { margin: 0; }
+.yi .whole { font: 400 .9375rem/1.6 var(--sans); padding: 2px 0 12px; direction: ltr; text-align: start; }
+.yi .whole p { font-size: 1.125rem; line-height: 1.6; }
+.w.in-st { background: color-mix(in srgb, var(--gold-bright) 18%, transparent); }
+.whole .tags { padding-top: 8px; }
+.whole .tag { border-color: color-mix(in srgb, var(--draft) 55%, transparent); color: var(--draft); }
+.w:disabled { cursor: default; text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="../img/icon.png" alt=""><b>Farshtey</b></a>
+    <nav aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#path">The path</a>
+      <a href="#learners">Shabbos &amp; privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="lang" href="../" lang="he" hreflang="he">עברית</a>
+    <a class="btn btn-gold" href="https://play.google.com/store/apps/details?id=org.lubavitchnetworks.yiddishgame&amp;hl=en">Get the app</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Farshtey · “understand” in Yiddish</span>
+        <h1>Read a sicha in Yiddish, <em>and understand it.</em></h1>
+        <p class="lead"><b>Tap any word to see what it means right here.</b> Then play the same passage without translations, until you can read it on your own.</p>
+        <div class="ctas">
+          <a class="btn btn-gold" href="https://play.google.com/store/apps/details?id=org.lubavitchnetworks.yiddishgame&amp;hl=en"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 6 3.5Z"/></svg>Get it on Google Play</a>
+          <a class="btn btn-ghost" href="../app/">Try it in your browser</a>
+        </div>
+        <p class="also">Also for <a href="../download/farshtey-windows.zip">Windows</a> · <a href="https://testflight.apple.com/join/czEGEJUZ">iPhone (beta)</a></p>
+        <ul class="trust">
+          <li>Free</li>
+          <li>No ads, no sign-up</li>
+          <li>No notifications on Shabbos and Yom Tov</li>
+        </ul>
+      </div>
+
+      <div class="leaf" aria-label="Example: the opening of the sicha">
+        <div class="leaf-head">
+          <span class="seal" aria-hidden="true">א</span>
+          <span class="src"><b>Sichos Shabbos Parshas Bereishis</b>Shabbos Mevarchim MarCheshvan 5752 · Section 1</span>
+          <span class="hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 11.2V5.5a2 2 0 1 1 4 0v4.3l4.3.9a2.5 2.5 0 0 1 1.95 2.9l-.9 4.8A3 3 0 0 1 15.4 21H11a3 3 0 0 1-2.4-1.2l-3.3-4.4a1.7 1.7 0 0 1 2.6-2.2Z"/></svg>Tap a word</span>
+        </div>
+        <div class="yi" id="yi"></div>
+        <div class="sheet" id="sheet" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">How it works</span>
+        <h2>Every passage in two steps</h2>
+        <p>The sicha is divided into short passages. First you study a passage with translations, then you test yourself on the same passage.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="n">1</span>
+          <h3>Study</h3>
+          <p>Read the passage. Every word is marked. Tap one to see its meaning in this context, with its dictionary form. You can also open the translation of the whole sentence.</p>
+          <div class="phone"><img src="../img/en/2-study.webp" alt="Study screen: tapping the word וואָכעדיקן shows “weekday” and its dictionary form וואָכעדיק" loading="lazy" width="540" height="960"></div>
+        </div>
+        <div class="step">
+          <span class="n">2</span>
+          <h3>Play</h3>
+          <p>The same passage, without translations. Choose what each word means here, build points and a streak, and finish with a comprehension question.</p>
+          <div class="phone"><img src="../img/en/3-question.webp" alt="A game question: what does the word mean here, with four options" loading="lazy" width="540" height="960"></div>
+        </div>
+        <div class="step">
+          <span class="n">3</span>
+          <h3>The next passage opens</h3>
+          <p>Earn up to three stars per passage. Play another round on the words you haven’t been asked yet, or move on.</p>
+          <div class="phone"><img src="../img/en/6-results.webp" alt="Results screen: three stars, 120 points, passage 5 unlocked" loading="lazy" width="540" height="960"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="path" id="path">
+    <div class="wrap">
+      <div class="copy">
+        <span class="eyebrow">The path</span>
+        <h2 style="font-size:clamp(2rem,4vw,2.8rem);font-weight:900">One sicha, from beginning to end</h2>
+        <p style="color:var(--ink-soft);font-size:1.125rem;max-width:52ch">The goal is concrete: read the sicha of Shabbos Parshas Bereishis 5752 in the original and understand it. The path goes through it section by section, passage by passage. The daily goal is one passage.</p>
+        <dl class="figures">
+          <div><dt>24</dt><dd>passages</dd></div>
+          <div><dt>10</dt><dd>sections</dd></div>
+          <div><dt>5,300</dt><dd>words, all translated</dd></div>
+        </dl>
+      </div>
+      <div class="phone"><img src="../img/en/1b-journey.webp" alt="The path of passages: passages 1 to 3 with stars, passage 4 up next" loading="lazy" width="540" height="960"></div>
+    </div>
+  </section>
+
+  <section id="learners">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Built for learners</span>
+        <h2>Learn every day, and Shabbos stays Shabbos</h2>
+      </div>
+      <div class="feats">
+        <div class="feat wide">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M8 3v5M16 3v5M9.5 11.5c0 1.8 1.1 3 2.5 3s2.5-1.2 2.5-3M12 14.5V21M6 21h12"/><path fill="currentColor" d="M8 2c.9 1 .9 2 0 3-.9-1-.9-2 0-3ZM16 2c.9 1 .9 2 0 3-.9-1-.9-2 0-3Z"/></svg></span>
+          <h3>Shabbos and Yom Tov</h3>
+          <p>No notifications or reminders on Shabbos and Yom Tov, based on your city’s times. Your streak counts study days and never breaks on Shabbos or Yom Tov.</p>
+        </div>
+        <div class="feat">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 3 4.5 6v5.5c0 4.4 3.1 8.3 7.5 9.5 4.4-1.2 7.5-5.1 7.5-9.5V6L12 3Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="m8.8 12 2.2 2.2 4.2-4.4"/></svg></span>
+          <h3>No tracking</h3>
+          <p>No ads, no sign-up and no data collection. Your progress stays on your device.</p>
+        </div>
+        <div class="feat">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 6h9M8.5 4v2M6 6c.5 3 2.5 5.5 5 6.5M11 6c-.6 3.2-2.8 6-6 7.5M13 20l4-9 4 9M14.5 17h5"/></svg></span>
+          <h3>English or Hebrew</h3>
+          <p>The interface and translations come in both languages. The sicha itself is always right-to-left, in large, comfortable type.</p>
+        </div>
+        <div class="feat">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="16" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <h3>Gentle sounds</h3>
+          <p>Kalimba and wood, and a tune that builds with every correct answer in a row. You can turn them off.</p>
+        </div>
+        <div class="feat">
+          <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></span>
+          <h3>Dark mode</h3>
+          <p>Study at night without the glare. The app follows your phone’s setting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="note">
+    <div class="wrap">
+      <div class="card">
+        <span class="badge">draft · Automatic translation, not yet reviewed</span>
+        <div>
+          <h3>About the translations</h3>
+          <p>Every word in the sicha is translated, including phrases and in-context meanings. Some translations are still drafts, and language reviewers are going through them. Until a translation is reviewed, the app marks it with this label, so you always know what has been checked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Before you start</h2>
+      </div>
+      <div class="qa">
+        <details open>
+          <summary>Do I need to know Yiddish?</summary>
+          <p>No. If you can read Hebrew letters, you can start. Every word is translated into English, and words from Lashon Hakodesh are marked as such.</p>
+        </details>
+        <details>
+          <summary>Is there an iPhone app?</summary>
+          <p>The iPhone app is waiting for Apple's approval. Meanwhile you can install it as a tester, through Apple's TestFlight:</p>
+          <ol>
+            <li>On your iPhone, open the App Store, search for <b>TestFlight</b> and install it (free, by Apple).</li>
+            <li>Open the <a href="https://testflight.apple.com/join/czEGEJUZ">invite link</a> on your iPhone.</li>
+            <li>On the page that opens, tap <b>View in TestFlight</b> — or, if TestFlight is already open, <b>Accept</b>.</li>
+            <li>Tap <b>Install</b>. Farshtey appears on your home screen, with a small orange dot next to its name.</li>
+            <li>Updates arrive through TestFlight. Once the app is in the App Store, you can download it from there as usual.</li>
+          </ol>
+          <p>You can also study in the browser and add the app to your home screen with Share → Add to Home Screen.</p>
+        </details>
+        <details>
+          <summary>How do I install it on Windows?</summary>
+          <p>Download the <a href="../download/farshtey-windows.zip">zip file</a>, extract it to a folder and run farshtey.exe. The first time, Windows may warn that the app is unrecognized: click “More info”, then “Run anyway”.</p>
+        </details>
+        <details>
+          <summary>How much does it cost?</summary>
+          <p>Nothing. The app is free, with no ads and no in-app purchases.</p>
+        </details>
+        <details>
+          <summary>What about Shabbos?</summary>
+          <p>There are no notifications or reminders on Shabbos and Yom Tov. The app knows when they are from the city you choose, and your streak doesn’t break on them.</p>
+        </details>
+        <details>
+          <summary>How much time does it take?</summary>
+          <p>The daily goal is one passage: a study session and a short game. If you want more, go on to the next passage or play another round on the same one.</p>
+        </details>
+        <details>
+          <summary>What comes after this sicha?</summary>
+          <p>More sichos, and later listening too: understanding sichos and farbrengens by ear.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="close">
+    <div class="wrap">
+      <h2>The first passage <em>is waiting.</em></h2>
+      <p>A few minutes a day, passage after passage, until you read the sicha without translations.</p>
+      <div class="ctas">
+        <a class="btn btn-gold" href="https://play.google.com/store/apps/details?id=org.lubavitchnetworks.yiddishgame&amp;hl=en"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 6 3.5Z"/></svg>Get it on Google Play</a>
+        <a class="btn btn-ghost" href="../app/">Try it in your browser</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Farshtey</span>
+    <span>Android, iPhone, Windows and web</span>
+    <span>No ads, no data collection</span>
+    <a href="../privacy/#en">Privacy policy</a>
+    <a href="https://forms.gle/dUirVRAPidaat7im6" target="_blank" rel="noopener">Contact us</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // פתיחת השיחה — בדיוק מה שהאפליקציה מציגה בהקשה (נוצר מתוכן האפליקציה)
+  const DATA = {"words": [{"w": "ס'איז", "p": "", "g": "it is", "k": "Yiddish", "d": true, "s": 0, "l": "איז"}, {"w": "באַוואוסט", "p": "", "g": "known, well known", "k": "Yiddish", "d": true, "s": 0}, {"w": "דער", "p": "", "g": "the (m.)", "k": "Yiddish", "d": true, "s": 0}, {"w": "וואָרט", "p": "", "g": "saying, word", "k": "Yiddish", "d": true, "s": 0}, {"w": "פון", "p": "", "g": "of", "k": "Yiddish", "d": true, "s": 0}, {"w": "רבותינו", "p": "", "g": "our masters", "k": "Lashon Hakodesh", "d": true, "s": 0}, {"w": "נשיאינו", "p": ",", "g": "our leaders (Nesi'im)", "k": "Lashon Hakodesh", "d": true, "s": 0}, {"w": "אַז", "p": "", "g": "that, when", "k": "Yiddish", "d": false, "s": 0}, {"w": "שבת", "p": "", "g": "Shabbat", "k": "Lashon Hakodesh", "d": true, "s": 0}, {"w": "בראשית", "p": "", "g": "Bereishit (Genesis)", "k": "Lashon Hakodesh", "d": true, "s": 0}, {"w": "איז", "p": "", "g": "concerns", "k": "Phrase", "d": true, "s": 0, "ph": [10, 11, 12], "hw": "איז נוגע צו"}, {"w": "נוגע", "p": "", "g": "concerns", "k": "Phrase", "d": true, "s": 0, "ph": [10, 11, 12], "hw": "איז נוגע צו"}, {"w": "צו", "p": "", "g": "concerns", "k": "Phrase", "d": true, "s": 0, "ph": [10, 11, 12], "hw": "איז נוגע צו"}, {"w": "דעם", "p": "", "g": "the (dat./acc.)", "k": "Yiddish", "d": true, "s": 0, "l": "דער"}, {"w": "גאַנצן", "p": "", "g": "whole, entire", "k": "Yiddish", "d": true, "s": 0, "l": "גאַנץ"}, {"w": "יאָר", "p": ".", "g": "year", "k": "Yiddish", "d": true, "s": 0}, {"w": "אַזוי", "p": "", "g": "just as", "k": "Phrase", "d": true, "s": 16, "ph": [16, 17], "hw": "אַזוי ווי"}, {"w": "ווי", "p": "", "g": "just as", "k": "Phrase", "d": true, "s": 16, "ph": [16, 17], "hw": "אַזוי ווי"}, {"w": "מ'שטעלט", "p": "", "g": "one stands, pauses", "k": "Phrase", "d": true, "s": 16, "ph": [18, 19, 20], "hw": "מ'שטעלט זיך אַוועק"}, {"w": "זיך", "p": "", "g": "one stands, pauses", "k": "Phrase", "d": true, "s": 16, "ph": [18, 19, 20], "hw": "מ'שטעלט זיך אַוועק"}, {"w": "אַוועק", "p": "", "g": "one stands, pauses", "k": "Phrase", "d": true, "s": 16, "ph": [18, 19, 20], "hw": "מ'שטעלט זיך אַוועק"}, {"w": "שבת", "p": "", "g": "Shabbat", "k": "Lashon Hakodesh", "d": true, "s": 16}, {"w": "בראשית", "p": ",", "g": "Bereishit (Genesis)", "k": "Lashon Hakodesh", "d": true, "s": 16}, {"w": "אַזוי", "p": "", "g": "so, thus", "k": "Yiddish", "d": false, "s": 16}, {"w": "גייט", "p": "", "g": "goes", "k": "Yiddish", "d": true, "s": 16, "l": "גיין"}, {"w": "אַ", "p": "", "g": "a, an", "k": "Yiddish", "d": true, "s": 16}, {"w": "גאַנץ", "p": "", "g": "whole", "k": "Yiddish", "d": true, "s": 16}, {"w": "יאָר", "p": ".", "g": "year", "k": "Yiddish", "d": true, "s": 16}], "sentences": {"0": {"t": "The saying of our Rebbeim is well known, that Shabbos Bereishis concerns the whole year.", "d": true}, "16": {"t": "As one establishes oneself on Shabbos Bereishis, so goes the whole year.", "d": true}}};
+  const T = {"dict": "dictionary form: ", "draft": "draft · Automatic translation, not yet reviewed", "show": "Translate the sentence", "hide": "Hide the sentence translation"};
+  const yi = document.getElementById("yi");
+  const sheet = document.getElementById("sheet");
+  const buttons = [];
+  let current = null;
+  // המילים לפי משפטים; אחרי כל משפט — "תרגום המשפט", כמו באפליקציה
+  const open = new Set();
+  const blocks = {};
+  let line = null;
+  DATA.words.forEach((x, i) => {
+    if (!line || line.dataset.s !== String(x.s)) {
+      line = document.createElement("p");
+      line.className = "st-words"; line.lang = "yi"; line.dataset.s = String(x.s);
+      yi.append(line);
+      const box = document.createElement("div");
+      box.className = "whole";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      const tr = document.createElement("div");
+      box.append(btn, tr);
+      yi.append(box);
+      blocks[x.s] = { btn, tr };
+      btn.addEventListener("click", () => { open.has(x.s) ? open.delete(x.s) : open.add(x.s); renderSentences(); });
+    }
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "w"; b.textContent = x.w;
+    if (x.g) b.addEventListener("click", () => show(i)); else b.disabled = true;
+    buttons.push(b);
+    line.append(b);
+    if (x.p) line.append(x.p);
+    line.append(" ");
+  });
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
+  function show(i) {
+    current = i;
+    const x = DATA.words[i];
+    buttons.forEach((b, j) => b.classList.toggle("on", x.ph ? x.ph.includes(j) : j === i));
+    sheet.replaceChildren();
+    sheet.append(el("span", "hw", x.hw || x.w));
+    if (x.l) {
+      const m = el("span", "meta", T.dict);
+      const bdi = el("bdi", null, x.l); bdi.dir = "rtl";
+      m.append(bdi); sheet.append(m);
+    }
+    sheet.append(el("span", "he", x.g));
+    const tags = el("div", "tags");
+    tags.append(el("span", "tag kind", x.k));
+    if (x.d) tags.append(el("span", "tag", T.draft));
+    sheet.append(tags);
+    sheet.classList.remove("pop"); void sheet.offsetWidth; sheet.classList.add("pop");
+  }
+  function renderSentences() {
+    buttons.forEach((b, j) => b.classList.toggle("in-st", open.has(DATA.words[j].s)));
+    for (const [s, { btn, tr }] of Object.entries(blocks)) {
+      const st = DATA.sentences[s];
+      const isOpen = open.has(Number(s)) || open.has(s);
+      btn.textContent = isOpen ? T.hide : T.show;
+      btn.setAttribute("aria-expanded", String(isOpen));
+      tr.replaceChildren();
+      if (isOpen && st) {
+        tr.append(el("p", null, st.t));
+        if (st.d) { const t2 = el("div", "tags"); t2.append(el("span", "tag", T.draft)); tr.append(t2); }
+      }
+    }
+  }
+  renderSentences();
+  show(14);
+})();
+</script>
+
+</body>
+</html>
